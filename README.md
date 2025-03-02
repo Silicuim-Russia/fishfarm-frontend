@@ -1,5 +1,11 @@
-# Vue 3 + Vite
+#Что нужно для работы:
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+1.  Node.js
+2.  Python и библиотеки из requirements.txt
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+Установите файлы из двух репозиториев
+Запустите Django сервер с помощью команды python manage.py runserver в верхней дириктории проекта Django.
+После чего в дириктории проекта node.js запустите команды:
+
+1.  npm install
+2.  npm run dev

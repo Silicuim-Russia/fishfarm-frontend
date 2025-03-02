@@ -12,7 +12,7 @@ defineProps({
   <router-link :to="{ name: 'HomePage', params: { id: pool_id } }">
     <Card class="pool_card">
       <div class="select_info">
-        <img src="/src/assets/icons/ellipse.svg" />
+        <!-- <img src="/src/assets/icons/ellipse.svg" /> -->
         <div class="info_layout">
           <span class="title">{{ pool_name }}</span>
           <span class="secondary">{{ pool_desc }}</span>
