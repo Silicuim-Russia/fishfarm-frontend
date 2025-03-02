@@ -1,8 +1,18 @@
 <script setup>
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ref, watch } from 'vue';
 
-defineProps({
+const props = defineProps({
   sensor: {
     type: String,
     required: true,
@@ -14,6 +24,12 @@ defineProps({
   value: {
     type: Number,
     required: true,
+  },
+  maxValue: {
+    type: Number,
+  },
+  minValue: {
+    type: Number,
   },
 });
 
@@ -48,6 +64,30 @@ const getFormattedValue = (sensor, value) => {
   };
   return formats[sensor] || value.toFixed(2);
 };
+
+// Состояние для минимального и максимального значения
+const localMinValue = ref(null);
+const localMaxValue = ref(null);
+
+// Метод для сохранения настроек
+const saveSettings = () => {
+  console.log('Минимальное значение:', localMinValue.value);
+  console.log('Максимальное значение:', localMaxValue.value);
+};
+
+// Отслеживаем открытие Drawer и инициализируем значения
+const isDrawerOpen = ref(false);
+
+watch(isDrawerOpen, (newVal) => {
+  if (newVal) {
+    // При открытии Drawer устанавливаем значения из props
+    localMinValue.value = props.minValue ?? null;
+    localMaxValue.value = props.maxValue ?? null;
+  }
+});
+
+// Эмитим событие close при закрытии Drawer
+const emit = defineEmits(['close']);
 </script>
 
 <template>
@@ -59,21 +99,90 @@ const getFormattedValue = (sensor, value) => {
         <div class="secondary">{{ getFormattedValue(sensor, value) }}</div>
       </div>
 
-      <!-- Кнопка "Настроить" -->
-      <Button type="submit" class="w-full">
-        <img src="/src/assets/icons/cog.svg" alt="Настройки" /> Настроить
-      </Button>
+      <!-- Кнопка "Настроить" с Drawer -->
+      <Drawer v-model:open="isDrawerOpen">
+        <DrawerTrigger asChild>
+          <Button class="w-full">
+            <img src="/src/assets/icons/cog.svg" alt="Настройки" /> Настроить
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <div class="drawer_layout">
+            <DrawerHeader>
+              <DialogTitle
+                >Настройки датчика "{{ getSensorName(sensor) }}" ID:
+                {{ sensor_id }}</DialogTitle
+              >
+            </DrawerHeader>
+
+            <!-- Содержимое настроек -->
+            <div class="settings_container p-4">
+              <!-- Текущее значение -->
+              <div class="setting_item mb-4">
+                <strong>Текущее значение:</strong>
+                {{ getFormattedValue(sensor, value) }}
+              </div>
+
+              <!-- Минимальное допустимое значение -->
+              <div class="setting_item mb-4">
+                <Label for="min-value">Мин. допустимое значение</Label>
+                <Input
+                  id="min-value"
+                  type="number"
+                  placeholder="Введите минимум"
+                  v-model="localMinValue"
+                />
+              </div>
+
+              <!-- Максимальное допустимое значение -->
+              <div class="setting_item mb-4">
+                <Label for="max-value">Макс. допустимое значение</Label>
+                <Input
+                  id="max-value"
+                  type="number"
+                  placeholder="Введите максимум"
+                  v-model="localMaxValue"
+                />
+              </div>
+            </div>
+
+            <!-- Футер с кнопками -->
+            <DrawerFooter class="flex flex-col gap-4 p-4">
+              <!-- Кнопка "Сохранить" -->
+              <Button @click="saveSettings" class="w-full">Сохранить</Button>
+
+              <!-- Кнопка "Закрыть" -->
+              <Button
+                variant="outline"
+                @click="isDrawerOpen = false"
+                class="w-full"
+              >
+                Закрыть
+              </Button>
+            </DrawerFooter>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   </Card>
 </template>
 
 <style scoped>
+.drawer_layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 412px;
+  margin: 0 auto;
+  background: #fff;
+}
 .info_layout {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 }
+
 .primary {
   color: #0f172a;
   font-size: 16px;
@@ -82,6 +191,7 @@ const getFormattedValue = (sensor, value) => {
   line-height: 24px;
   letter-spacing: 0.1px;
 }
+
 .secondary {
   overflow: hidden;
   color: #0f172a;
@@ -91,5 +201,17 @@ const getFormattedValue = (sensor, value) => {
   font-weight: 500;
   line-height: 24px;
   letter-spacing: 0.15px;
+}
+
+.settings_container {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting_item {
+  font-size: 14px;
+  color: #333;
 }
 </style>

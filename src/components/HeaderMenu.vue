@@ -83,8 +83,8 @@ const Logout = () => {
   width: 100%;
   max-width: 840px;
   margin: 0 auto;
+  background: #fff;
   margin-bottom: 24px;
-  margin-top: 24px;
 }
 
 .menu__container {

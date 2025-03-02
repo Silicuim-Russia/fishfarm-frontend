@@ -56,7 +56,7 @@ const login = async () => {
 
 <template>
   <div>
-    <Card class="w-[425px]">
+    <Card class="w-[412px]">
       <CardHeader>
         <CardTitle>Авторизация</CardTitle>
         <CardDescription>
