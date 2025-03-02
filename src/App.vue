@@ -10,7 +10,7 @@ onMounted(async () => {
   const isAuthenticated = await checkAuthInitData();
 
   if (!isAuthenticated) {
-    // router.push('/login');
+    router.push('/login');
   }
 });
 </script>

@@ -5,12 +5,13 @@ import SelectPage from '@/views/SelectPage.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/pool/:id',
     name: 'HomePage',
     component: HomePage,
+    props: (route) => ({ pool_id: route.params.id }),
   },
   {
-    path: '/select',
+    path: '/',
     name: 'SelectPage',
     component: SelectPage,
   },

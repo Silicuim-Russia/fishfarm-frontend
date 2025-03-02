@@ -4,44 +4,60 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
-  CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/toast/use-toast';
 import HeaderMenu from '@/components/HeaderMenu.vue';
 import LiveView from '@/components/LiveView.vue';
 import SensorCard from '@/components/SensorCard.vue';
 
-const sensors = [
-  {
-    sensor_id: '123',
-    sensor_name: 'temperature',
-    value: 37.3,
-    minValue: 31.4,
-    maxValue: 38,
-  },
-  {
-    sensor_id: '134',
-    sensor_name: 'salinity',
-    value: 11,
-    minValue: 10.4,
-    maxValue: 12,
-  },
-  {
-    sensor_id: '167',
-    sensor_name: 'salinity',
-    value: 11,
-    minValue: 10,
-    maxValue: 12,
-  },
-];
+import { useRoute } from 'vue-router';
+import { onMounted, computed } from 'vue';
+import { usePoolsDataStore } from '../../stores/poolsDataStore';
+
+const route = useRoute();
+const pool_id = route.params.id;
+const poolsDataStore = usePoolsDataStore();
+const { toast } = useToast();
+
+onMounted(async () => {
+  try {
+    if (!pool_id) {
+      console.error('ID бассейна не передан');
+      return;
+    }
+
+    await poolsDataStore.fetchPoolData(pool_id);
+  } catch (error) {
+    console.error('Ошибка при загрузке данных бассейна:', error);
+  }
+});
+
+const handleSaveClick = () => {
+  toast({
+    title: 'Функция в разработке',
+    description: 'Сохранение данных пока не доступно.',
+    variant: 'default', // Стиль тоста
+  });
+};
+
+// Функция для обработки клика на кнопку "Удалить"
+const handleDeleteClick = () => {
+  toast({
+    title: 'Функция в разработке',
+    description: 'Удаление бассейна пока не доступно.',
+    variant: 'destructive',
+  });
+};
+
+const sensorsList = computed(() => poolsDataStore.getSensorsList);
 </script>
 
 <template>
-  <HeaderMenu />
+  <HeaderMenu :pool_id_active="pool_id" />
   <LiveView />
 
   <!-- Вкладки -->
@@ -57,17 +73,19 @@ const sensors = [
     <TabsContent value="sensors">
       <div class="sensors__container">
         <SensorCard
-          v-for="sensor in sensors"
+          v-for="sensor in sensorsList"
+          :pool_id="pool_id"
           :sensor_id="sensor.sensor_id"
           :sensor="sensor.sensor_name"
           :value="sensor.value"
           :maxValue="sensor.maxValue"
           :minValue="sensor.minValue"
+          :zone="sensor.zone"
         />
       </div>
     </TabsContent>
 
-    <!-- Содержимое вкладки "Сценарии" -->
+    <!-- Содержимое вкладки "settings" -->
     <TabsContent value="settings">
       <Card class="settings__container p-4">
         <CardTitle class="title mb-2">Отображаемая информация</CardTitle>
@@ -99,7 +117,7 @@ const sensors = [
             </div>
 
             <!-- Кнопка "Сохранить" внутри формы -->
-            <Button type="submit" class=""
+            <Button type="submit" @click="handleSaveClick"
               ><img src="/src/assets/icons/check-check.svg" />Сохранить</Button
             >
           </form>
@@ -112,7 +130,7 @@ const sensors = [
           осторожностью
         </CardDescription>
         <CardContent class="content-container mt-4">
-          <Button variant="destructive" @click="delete"
+          <Button variant="destructive" @click="handleDeleteClick"
             ><img src="/src/assets/icons/alert-circle.svg" />Удалить</Button
           >
         </CardContent>

@@ -3,26 +3,36 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { useToast } from '@/components/ui/toast/use-toast';
+import { usePoolsStore } from '../../stores/poolsStore';
+import { ref, watch } from 'vue';
 
-const pools = [
-  { name: 'Бассейн 1', description: 'Секция 1, ряд 2', is_active: true },
-  { name: 'Бассейн 2', description: 'Секция 2, ряд 3', is_active: false },
-  { name: 'Бассейн 3', description: 'Секция 3, ряд 4', is_active: false },
-];
-
+const poolsStore = usePoolsStore();
 const router = useRouter();
+const route = useRoute();
+const { toast } = useToast();
+const pool_id_active = ref(null);
+
 const Logout = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
-
   router.push('/login');
 };
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      pool_id_active.value = Number(newId);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -35,22 +45,23 @@ const Logout = () => {
           <NavigationMenuContent>
             <ul class="menu__container">
               <li
-                v-for="(pool, index) in pools"
-                :key="index"
+                v-for="pool in poolsStore.allPools"
+                :key="pool.pool_id"
                 class="pool__item"
-                :class="{ 'active-pool': pool.is_active }"
+                :class="{
+                  'active-pool': pool.pool_id === pool_id_active,
+                }"
               >
-                <NavigationMenuLink asChild>
-                  <button
-                    type="button"
-                    class="pool__link flex flex-col gap-1 w-full"
-                  >
-                    <span class="text-sm font-medium">{{ pool.name }}</span>
-                    <span class="text-xs text-muted-foreground">{{
-                      pool.description
-                    }}</span>
-                  </button>
-                </NavigationMenuLink>
+                <!-- Используем тег <a> для навигации с перезагрузкой -->
+                <a
+                  :href="`/pool/${pool.pool_id}`"
+                  class="pool__link flex flex-col gap-1 w-full"
+                >
+                  <span class="text-sm font-medium">{{ pool.pool_name }}</span>
+                  <span class="text-xs text-muted-foreground">{{
+                    pool.pool_desc
+                  }}</span>
+                </a>
               </li>
             </ul>
           </NavigationMenuContent>
@@ -107,7 +118,7 @@ const Logout = () => {
 }
 
 .pool__item.active-pool {
-  background-color: var(--slate-100, #f1f5f9);
+  background-color: var(--slate-50, #f1f5f9);
 }
 
 .pool__link {
@@ -116,10 +127,12 @@ const Logout = () => {
   text-align: left;
   border-radius: 4px;
   transition: background-color 0.3s ease;
+  text-decoration: none;
+  color: inherit;
 }
 
 .pool__link:hover {
-  background-color: var(--slate-50, #f9fafb);
+  background-color: var(--slate-50, #f1f5f9);
 }
 
 .text-muted-foreground {

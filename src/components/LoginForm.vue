@@ -14,6 +14,7 @@ import { useToast } from '@/components/ui/toast/use-toast';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import apiClient from '@/services/authService';
+import { checkAuthInitData } from '@/services/authChecker';
 
 const username = ref('');
 const password = ref('');
@@ -33,13 +34,14 @@ const login = async () => {
 
   try {
     const response = await apiClient.post('login/', {
-      username: username.value.trim(),
-      password: password.value.trim(),
+      username: username.value,
+      password: password.value,
     });
 
     if (response.data.access && response.data.refresh) {
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
+      checkAuthInitData();
       router.push('/');
     }
   } catch (error) {

@@ -10,15 +10,23 @@ import {
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/toast/use-toast';
 import { ref, watch } from 'vue';
+import apiClient from '@/services/authService';
+
+const { toast } = useToast();
 
 const props = defineProps({
+  pool_id: {
+    type: String,
+    required: true,
+  },
   sensor: {
     type: String,
     required: true,
   },
   sensor_id: {
-    type: String,
+    type: Number,
     required: true,
   },
   value: {
@@ -31,63 +39,83 @@ const props = defineProps({
   minValue: {
     type: Number,
   },
+  zone: {
+    type: String,
+  },
 });
 
-// Функция для получения названия датчика
 const getSensorName = (sensor) => {
   const names = {
     temperature: 'Температура',
-    oxygen_level: 'Кислород',
-    ph_level: 'Кислотность',
-    orp_level: 'ORP',
+    oxygen_saturation: 'Кислород',
+    pH: 'Кислотность',
+    orp: 'ORP',
     salinity: 'Соленость',
     water_level: 'Уровень воды',
     turbidity: 'Мутность',
-    amonia_content: 'Аммиак',
-    netrite_content: 'Нитриты',
+    ammonia_content: 'Аммиак',
+    nitrite_content: 'Нитриты',
   };
   return names[sensor] || sensor;
 };
 
-// Функция для форматирования значения
 const getFormattedValue = (sensor, value) => {
   const formats = {
     temperature: `${value.toFixed(1)} °C`,
-    oxygen_level: `${value.toFixed(2)} мг/л`,
-    ph_level: `${value.toFixed(2)} pH`,
-    orp_level: `${value.toFixed(2)} мВ`,
+    oxygen_saturation: `${value.toFixed(2)} мг/л`,
+    pH: `${value.toFixed(2)} pH`,
+    orp: `${value.toFixed(2)} мВ`,
     salinity: `${value.toFixed(2)} мг/л`,
     water_level: `${value.toFixed(2)} м`,
     turbidity: `${value.toFixed(2)} NTU`,
-    amonia_content: `${value.toFixed(2)} мг/л`,
-    netrite_content: `${value.toFixed(2)} мг/л`,
+    ammonia_content: `${value.toFixed(2)} мг/л`,
+    nitrite_content: `${value.toFixed(2)} мг/л`,
   };
   return formats[sensor] || value.toFixed(2);
 };
 
-// Состояние для минимального и максимального значения
 const localMinValue = ref(null);
 const localMaxValue = ref(null);
 
-// Метод для сохранения настроек
-const saveSettings = () => {
-  console.log('Минимальное значение:', localMinValue.value);
-  console.log('Максимальное значение:', localMaxValue.value);
+const saveSettings = async () => {
+  try {
+    const response = await apiClient.post('update/', {
+      sensor: props.sensor,
+      pool_id: props.pool_id,
+      minValue: localMinValue.value,
+      maxValue: localMaxValue.value,
+    });
+
+    if (response.data.is_updated) {
+      toast({
+        title: 'Параметры датчика обновленны',
+        description: 'Значения были применены.',
+      });
+    } else {
+      throw new Error(response.data.message || 'Неизвестная ошибка');
+    }
+  } catch (error) {
+    console.error('Ошибка при обновлении настроек:', error);
+    toast({
+      title: 'Ошибка при обновлении настроек датчика',
+      description: 'Проверьте введенные данные для изменения.',
+      variant: 'destructive',
+    });
+    errorMessage.value = error.message || 'Произошла ошибка при сохранении.';
+    console.log('error');
+  } finally {
+    isDrawerOpen.value = false;
+  }
 };
 
-// Отслеживаем открытие Drawer и инициализируем значения
 const isDrawerOpen = ref(false);
 
 watch(isDrawerOpen, (newVal) => {
   if (newVal) {
-    // При открытии Drawer устанавливаем значения из props
     localMinValue.value = props.minValue ?? null;
     localMaxValue.value = props.maxValue ?? null;
   }
 });
-
-// Эмитим событие close при закрытии Drawer
-const emit = defineEmits(['close']);
 </script>
 
 <template>
@@ -96,7 +124,15 @@ const emit = defineEmits(['close']);
       <!-- Название датчика и его значение -->
       <div class="w-[236px] flex flex-row place-content-between">
         <div class="primary">{{ getSensorName(sensor) }}</div>
-        <div class="secondary">{{ getFormattedValue(sensor, value) }}</div>
+        <div
+          class="secondary"
+          :class="{
+            'text-green': zone === 'green',
+            'text-red': zone === 'red',
+          }"
+        >
+          {{ getFormattedValue(sensor, value) }}
+        </div>
       </div>
 
       <!-- Кнопка "Настроить" с Drawer -->
@@ -146,7 +182,6 @@ const emit = defineEmits(['close']);
               </div>
             </div>
 
-            <!-- Футер с кнопками -->
             <DrawerFooter class="flex flex-col gap-4 p-4">
               <!-- Кнопка "Сохранить" -->
               <Button @click="saveSettings" class="w-full">Сохранить</Button>
@@ -213,5 +248,11 @@ const emit = defineEmits(['close']);
 .setting_item {
   font-size: 14px;
   color: #333;
+}
+.text-green {
+  color: #2cc702;
+}
+.text-red {
+  color: #ff0000;
 }
 </style>

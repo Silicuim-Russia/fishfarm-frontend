@@ -1,17 +1,25 @@
 <script setup>
 import Card from '@/components/ui/card/Card.vue';
+
+defineProps({
+  pool_id: [String, Number],
+  pool_name: String,
+  pool_desc: String,
+});
 </script>
 
 <template>
-  <Card class="pool_card">
-    <div class="select_info">
-      <img src="/src/assets/icons/ellipse.svg" />
-      <div class="info_layout">
-        <span class="title">Бассейн №1</span>
-        <span class="secondary">Сектор 1, ряд 1</span>
+  <router-link :to="{ name: 'HomePage', params: { id: pool_id } }">
+    <Card class="pool_card">
+      <div class="select_info">
+        <img src="/src/assets/icons/ellipse.svg" />
+        <div class="info_layout">
+          <span class="title">{{ pool_name }}</span>
+          <span class="secondary">{{ pool_desc }}</span>
+        </div>
       </div>
-    </div>
-  </Card>
+    </Card>
+  </router-link>
 </template>
 
 <style scoped>
