@@ -73,7 +73,7 @@ const login = async () => {
             <Input
               id="username"
               type="text"
-              placeholder="ExampleName"
+              placeholder="Введите имя"
               v-model="username"
             />
           </div>

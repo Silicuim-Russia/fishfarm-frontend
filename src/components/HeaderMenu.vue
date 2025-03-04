@@ -8,14 +8,12 @@ import {
 } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
 import { useRouter, useRoute } from 'vue-router';
-import { useToast } from '@/components/ui/toast/use-toast';
 import { usePoolsStore } from '../../stores/poolsStore';
 import { ref, watch } from 'vue';
 
 const poolsStore = usePoolsStore();
 const router = useRouter();
 const route = useRoute();
-const { toast } = useToast();
 const pool_id_active = ref(null);
 
 const Logout = () => {

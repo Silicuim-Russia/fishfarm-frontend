@@ -11,9 +11,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/toast/use-toast';
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
+import { usePoolsDataStore } from '../../stores/poolsDataStore';
 import apiClient from '@/services/authService';
 
+const poolsDataStore = usePoolsDataStore();
 const { toast } = useToast();
 
 const props = defineProps({
@@ -87,6 +89,8 @@ const saveSettings = async () => {
     });
 
     if (response.data.is_updated) {
+      poolsDataStore.resetPoolData;
+      poolsDataStore.fetchPoolData(props.pool_id);
       toast({
         title: 'Параметры датчика обновленны',
         description: 'Значения были применены.',
@@ -109,11 +113,15 @@ const saveSettings = async () => {
 };
 
 const isDrawerOpen = ref(false);
+const focusTrap = ref(null);
 
 watch(isDrawerOpen, (newVal) => {
   if (newVal) {
     localMinValue.value = props.minValue ?? null;
     localMaxValue.value = props.maxValue ?? null;
+    nextTick(() => {
+      focusTrap.value?.focus();
+    });
   }
 });
 </script>
@@ -143,6 +151,8 @@ watch(isDrawerOpen, (newVal) => {
           </Button>
         </DrawerTrigger>
         <DrawerContent>
+          <div ref="focusTrap" tabindex="0" class="sr-only"></div>
+
           <div class="drawer_layout">
             <DrawerHeader>
               <DialogTitle
@@ -203,6 +213,17 @@ watch(isDrawerOpen, (newVal) => {
 </template>
 
 <style scoped>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .drawer_layout {
   display: flex;
   flex-direction: column;
@@ -217,7 +238,6 @@ watch(isDrawerOpen, (newVal) => {
   align-items: center;
   gap: 16px;
 }
-
 .primary {
   color: #0f172a;
   font-size: 16px;
@@ -226,7 +246,6 @@ watch(isDrawerOpen, (newVal) => {
   line-height: 24px;
   letter-spacing: 0.1px;
 }
-
 .secondary {
   overflow: hidden;
   color: #0f172a;
@@ -237,14 +256,12 @@ watch(isDrawerOpen, (newVal) => {
   line-height: 24px;
   letter-spacing: 0.15px;
 }
-
 .settings_container {
   max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .setting_item {
   font-size: 14px;
   color: #333;

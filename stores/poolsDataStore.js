@@ -111,5 +111,8 @@ export const usePoolsDataStore = defineStore('poolsData', {
         console.error('Ошибка при получении данных бассейна:', error);
       }
     },
+    resetPoolData() {
+      pool = null;
+    },
   },
 });
