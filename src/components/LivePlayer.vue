@@ -11,12 +11,16 @@ onMounted(() => {
     const hls = new Hls();
     hls.loadSource(hlsUrl);
     hls.attachMedia(videoPlayer.value);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+
+    videoPlayer.value.addEventListener('loadedmetadata', () => {
+      videoPlayer.value.currentTime = videoPlayer.value.duration || 0;
       videoPlayer.value.play();
     });
   } else if (videoPlayer.value.canPlayType('application/vnd.apple.mpegurl')) {
     videoPlayer.value.src = hlsUrl;
+
     videoPlayer.value.addEventListener('loadedmetadata', () => {
+      videoPlayer.value.currentTime = videoPlayer.value.duration || 0;
       videoPlayer.value.play();
     });
   }
@@ -34,6 +38,7 @@ onBeforeUnmount(() => {
   <div class="video-container">
     <video
       ref="videoPlayer"
+      controls
       autoplay
       playsinline
       muted

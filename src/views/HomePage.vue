@@ -60,7 +60,7 @@ const sensorsList = computed(() => poolsDataStore.getSensorsList);
 
     <!-- Содержимое вкладки "settings" -->
     <TabsContent value="settings">
-      <SettingsTab />
+      <SettingsTab :pool_id="pool_id" />
     </TabsContent>
   </Tabs>
 </template>

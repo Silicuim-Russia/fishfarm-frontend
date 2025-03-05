@@ -8,16 +8,70 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useToast } from '@/components/ui/toast/use-toast';
+import { usePoolsStore } from '../../stores/poolsStore';
+import { ref, watch } from 'vue';
+import apiClient from '@/services/authService';
 
+const poolsStore = usePoolsStore();
 const { toast } = useToast();
+const props = defineProps({
+  pool_id: [String, Number],
+});
 
-const handleSaveClick = () => {
-  toast({
-    title: 'Функция в разработке',
-    description: 'Сохранение данных пока не доступно.',
-    variant: 'default',
-  });
+const poolData = poolsStore.getPoolById(Number(props.pool_id));
+const pool_name = ref(poolData?.pool_name || '');
+const pool_desc = ref(poolData?.pool_desc || '');
+
+watch(
+  () => poolsStore.getPoolById(Number(props.pool_id)),
+  (newPoolData) => {
+    if (newPoolData) {
+      pool_name.value = newPoolData.pool_name || '';
+      pool_desc.value = newPoolData.pool_desc || '';
+    }
+  },
+  { immediate: true }
+);
+
+const isAlertDialogOpen = ref(false);
+const saveSettings = async () => {
+  try {
+    const response = await apiClient.post('setting/', {
+      pool_id: props.pool_id,
+      pool_name: pool_name.value,
+      pool_desc: pool_desc.value,
+    });
+
+    if (response.data.is_updated) {
+      poolsStore.fetchAllPools();
+      toast({
+        title: 'Успешно',
+        description: 'Отображаемая информация обновлена.',
+        variant: 'default',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    toast({
+      title: 'Ошибка в данных',
+      description: 'Пожалуйста, заполните поля верно.',
+      variant: 'destructive',
+    });
+  } finally {
+    isAlertDialogOpen.value = false;
+  }
 };
 
 const handleDeleteClick = () => {
@@ -48,9 +102,9 @@ const handleDeleteClick = () => {
           />
         </div>
 
-        <!-- Поле для Описание Бассейна -->
+        <!-- Поле для Описание бассейна -->
         <div class="flex flex-col space-y-1.5">
-          <Label for="pool_desc">Описание Бассейна</Label>
+          <Label for="pool_desc">Описание бассейна</Label>
           <Input
             id="pool_desc"
             type="text"
@@ -59,10 +113,28 @@ const handleDeleteClick = () => {
           />
         </div>
 
-        <!-- Кнопка "Сохранить" внутри формы -->
-        <Button type="submit" @click="handleSaveClick"
-          ><img src="/src/assets/icons/check-check.svg" />Сохранить</Button
-        >
+        <!-- Кнопка "Сохранить" с диалоговым окном -->
+        <AlertDialog>
+          <AlertDialogTrigger as-child>
+            <Button type="button">
+              <img src="/src/assets/icons/check-check.svg" />Сохранить
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Подтвердите изменения</AlertDialogTitle>
+              <AlertDialogDescription>
+                Будет обновлена отображаемая информация бассейна
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Отмена</AlertDialogCancel>
+              <AlertDialogAction @click="saveSettings"
+                >Подтвердить</AlertDialogAction
+              >
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </form>
     </CardContent>
   </Card>

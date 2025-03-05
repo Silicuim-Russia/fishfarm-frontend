@@ -16,13 +16,10 @@ export const usePoolsStore = defineStore('pools', {
       try {
         const response = await apiClient.get('all-pools/', {});
 
-        // Проверяем, что ответ содержит поле data_type
         if (response.data.data_type) {
-          // Заменяем одинарные кавычки на двойные и парсим JSON
           const poolsDataString = response.data.data_type.replace(/'/g, '"');
           const poolsData = JSON.parse(poolsDataString);
 
-          // Обновляем состояние pools
           this.pools = poolsData.map((pool) => ({
             pool_id: pool.pool_id,
             pool_name: pool.pool_name,
@@ -34,6 +31,9 @@ export const usePoolsStore = defineStore('pools', {
       } catch (error) {
         console.error('Ошибка при получении данных о бассейнах:', error);
       }
+    },
+    resetPoolsData() {
+      pools = [];
     },
   },
 });
