@@ -30,6 +30,7 @@ export const usePoolsStore = defineStore('pools', {
         }
       } catch (error) {
         console.error('Ошибка при получении данных о бассейнах:', error);
+        throw error;
       }
     },
     resetPoolsData() {

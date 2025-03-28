@@ -1,3 +1,4 @@
+import { refreshAuthToken } from './authRefresh';
 import { usePoolsStore } from '../../stores/poolsStore';
 
 export async function checkAuthInitData() {
@@ -14,7 +15,17 @@ export async function checkAuthInitData() {
     console.log('All data initialized successfully.');
     return true;
   } catch (error) {
-    console.error('Error initializing data:', error);
-    return false;
+    if (error.response && error.response.status === 401) {
+      const isTokenRefreshed = await refreshAuthToken();
+      if (isTokenRefreshed) {
+        console.log('Token refreshed successfully. Retrying fetchAllPools...');
+        await Promise.all([poolsStore.fetchAllPools()]);
+        console.log('All data initialized successfully after token refresh.');
+        return true;
+      } else {
+        console.error('Error initializing data:', error);
+        return false;
+      }
+    }
   }
 }
