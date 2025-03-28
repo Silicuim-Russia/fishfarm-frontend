@@ -19,3 +19,5 @@ onMounted(async () => {
   <Toaster />
   <router-view></router-view>
 </template>
+
+<style scoped></style>
