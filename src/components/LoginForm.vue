@@ -57,8 +57,8 @@ const login = async () => {
 </script>
 
 <template>
-  <div>
-    <Card class="w-[412px]">
+  <div class="login__container">
+    <Card class="login_form__container">
       <CardHeader>
         <CardTitle>Авторизация</CardTitle>
         <CardDescription>
@@ -97,4 +97,11 @@ const login = async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.login__container {
+  padding: 20px;
+}
+.login_form__container {
+  max-width: 480px;
+}
+</style>

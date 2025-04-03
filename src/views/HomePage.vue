@@ -30,42 +30,48 @@ const sensorsList = computed(() => poolsDataStore.getSensorsList);
 </script>
 
 <template>
-  <HeaderMenu :pool_id_active="pool_id" />
-  <LiveView />
+  <div class="home_page__container">
+    <HeaderMenu :pool_id_active="pool_id" />
+    <LiveView />
 
-  <!-- Вкладки -->
-  <Tabs defaultValue="sensors">
-    <div class="tabs__list-container">
-      <TabsList>
-        <TabsTrigger value="sensors">Датчики</TabsTrigger>
-        <TabsTrigger value="settings">Общие настройки</TabsTrigger>
-      </TabsList>
-    </div>
-
-    <!-- Содержимое вкладки "Датчики" -->
-    <TabsContent value="sensors">
-      <div class="sensors__container">
-        <SensorCard
-          v-for="sensor in sensorsList"
-          :pool_id="pool_id"
-          :sensor_id="sensor.sensor_id"
-          :sensor="sensor.sensor_name"
-          :value="sensor.value"
-          :maxValue="sensor.maxValue"
-          :minValue="sensor.minValue"
-          :zone="sensor.zone"
-        />
+    <!-- Вкладки -->
+    <Tabs defaultValue="sensors">
+      <div class="tabs__list-container">
+        <TabsList>
+          <TabsTrigger value="sensors">Датчики</TabsTrigger>
+          <TabsTrigger value="settings">Общие настройки</TabsTrigger>
+        </TabsList>
       </div>
-    </TabsContent>
 
-    <!-- Содержимое вкладки "settings" -->
-    <TabsContent value="settings">
-      <SettingsTab :pool_id="pool_id" />
-    </TabsContent>
-  </Tabs>
+      <!-- Содержимое вкладки "Датчики" -->
+      <TabsContent value="sensors">
+        <div class="sensors__container">
+          <SensorCard
+            v-for="sensor in sensorsList"
+            :pool_id="pool_id"
+            :sensor_id="sensor.sensor_id"
+            :sensor="sensor.sensor_name"
+            :value="sensor.value"
+            :maxValue="sensor.maxValue"
+            :minValue="sensor.minValue"
+            :zone="sensor.zone"
+          />
+        </div>
+      </TabsContent>
+
+      <!-- Содержимое вкладки "settings" -->
+      <TabsContent value="settings">
+        <SettingsTab :pool_id="pool_id" />
+      </TabsContent>
+    </Tabs>
+  </div>
 </template>
 
 <style scoped>
+.home_page__container {
+  padding-left: 20px;
+  padding-right: 20px;
+}
 .tabs__list-container {
   display: flex;
   align-items: center;
