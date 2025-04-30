@@ -16,10 +16,8 @@ const router = useRouter();
 const route = useRoute();
 const pool_id_active = ref(null);
 
-const Logout = () => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
-  router.push('/login');
+const select = () => {
+  router.push({ name: 'SelectPage' });
 };
 
 watch(
@@ -37,6 +35,10 @@ watch(
   <div class="header__container">
     <NavigationMenu>
       <NavigationMenuList>
+        <Button variant="ghost" @click="select" class="w-full justify-center">
+          Главная
+        </Button>
+
         <!-- Раздел "Бассейн" -->
         <NavigationMenuItem>
           <NavigationMenuTrigger>Бассейн</NavigationMenuTrigger>
@@ -60,22 +62,6 @@ watch(
                     pool.pool_desc
                   }}</span>
                 </a>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <!-- Раздел "Учетная запись" -->
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Учетная запись</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul class="grid gap-3 p-6 md:w-[400px]">
-              <li class="flex items-center space-x-4">
-                <NavigationMenuLink @click="Logout">
-                  <Button variant="outline" class="w-full justify-center">
-                    Выйти
-                  </Button>
-                </NavigationMenuLink>
               </li>
             </ul>
           </NavigationMenuContent>

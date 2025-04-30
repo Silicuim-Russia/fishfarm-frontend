@@ -27,10 +27,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  sensor_id: {
-    type: Number,
-    required: true,
-  },
   value: {
     type: Number,
     required: true,
@@ -64,14 +60,14 @@ const getSensorName = (sensor) => {
 const getFormattedValue = (sensor, value) => {
   const formats = {
     temperature: `${value.toFixed(1)} °C`,
-    oxygen_saturation: `${value.toFixed(2)} мг/л`,
-    pH: `${value.toFixed(2)} pH`,
-    orp: `${value.toFixed(2)} мВ`,
-    salinity: `${value.toFixed(2)} мг/л`,
-    water_level: `${value.toFixed(2)} м`,
-    turbidity: `${value.toFixed(2)} NTU`,
-    ammonia_content: `${value.toFixed(2)} мг/л`,
-    nitrite_content: `${value.toFixed(2)} мг/л`,
+    oxygen_saturation: `${value.toFixed(1)} мг/л`,
+    pH: `${value.toFixed(1)} pH`,
+    orp: `${value.toFixed(1)} мВ`,
+    salinity: `${value.toFixed(1)} мг/л`,
+    water_level: `${value.toFixed(1)} м`,
+    turbidity: `${value.toFixed(1)} NTU`,
+    ammonia_content: `${value.toFixed(1)} мг/л`,
+    nitrite_content: `${value.toFixed(1)} мг/л`,
   };
   return formats[sensor] || value.toFixed(2);
 };
@@ -127,92 +123,105 @@ watch(isDrawerOpen, (newVal) => {
 </script>
 
 <template>
-  <Card class="w-[270px]">
+  <Card class="card_container">
     <div class="info_layout p-4 space-y-0">
-      <!-- Название датчика и его значение -->
-      <div class="w-[236px] flex flex-row place-content-between">
-        <div class="primary">{{ getSensorName(sensor) }}</div>
-        <div
-          class="secondary"
-          :class="{
-            'text-green': zone === 'green',
-            'text-red': zone === 'red',
-          }"
-        >
-          {{ getFormattedValue(sensor, value) }}
+      <!-- Основная информация -->
+      <div class="sensor_info__container">
+        <div class="w-[100%] flex justify-between items-center">
+          <span class="medium">{{ getSensorName(sensor) }}</span>
+          <span :class="'value_text'">
+            {{ getFormattedValue(sensor, value) }}
+          </span>
+        </div>
+
+        <div class="w-[100%] flex justify-between items-center4">
+          <span class="muted">Норма</span>
+          <span class="medium">
+            {{ props.minValue.toFixed(1) }} – {{ props.maxValue.toFixed(1) }}
+          </span>
         </div>
       </div>
 
-      <!-- Кнопка "Настроить" с Drawer -->
-      <Drawer v-model:open="isDrawerOpen">
-        <DrawerTrigger asChild>
-          <Button class="w-full">
-            <img src="/src/assets/icons/cog.svg" alt="Настройки" /> Настроить
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <div ref="focusTrap" tabindex="0" class="sr-only"></div>
+      <!-- Кнопки "Подробнее" и "Настроить" -->
+      <div class="button_container">
+        <Button @click="openDetailsModal" class="more__button">
+          <img src="/src/assets/icons/history.svg" alt="Подробнее" />
+          Подробнее
+        </Button>
+        <Button @click="isDrawerOpen = true" class="settings__button">
+          <img src="/src/assets/icons/cog.svg" alt="Настройки" />
+        </Button>
+      </div>
+    </div>
 
-          <div class="drawer_layout">
-            <DrawerHeader>
-              <DialogTitle
-                >Настройки датчика "{{ getSensorName(sensor) }}" ID:
-                {{ sensor_id }}</DialogTitle
-              >
-            </DrawerHeader>
+    <!-- Drawer для настроек -->
+    <Drawer v-model:open="isDrawerOpen">
+      <DrawerContent>
+        <div ref="focusTrap" tabindex="0" class="sr-only"></div>
 
-            <!-- Содержимое настроек -->
-            <div class="settings_container p-4">
-              <!-- Текущее значение -->
-              <div class="setting_item mb-4">
-                <strong>Текущее значение:</strong>
-                {{ getFormattedValue(sensor, value) }}
-              </div>
+        <div class="drawer_layout">
+          <DrawerHeader>
+            <DialogTitle
+              >Настройки датчика "{{ getSensorName(sensor) }}" ID:
+              {{ sensor_id }}</DialogTitle
+            >
+          </DrawerHeader>
 
-              <!-- Минимальное допустимое значение -->
-              <div class="setting_item mb-4">
-                <Label for="min-value">Мин. допустимое значение</Label>
-                <Input
-                  id="min-value"
-                  type="number"
-                  placeholder="Введите минимум"
-                  v-model="localMinValue"
-                />
-              </div>
-
-              <!-- Максимальное допустимое значение -->
-              <div class="setting_item mb-4">
-                <Label for="max-value">Макс. допустимое значение</Label>
-                <Input
-                  id="max-value"
-                  type="number"
-                  placeholder="Введите максимум"
-                  v-model="localMaxValue"
-                />
-              </div>
+          <!-- Содержимое настроек -->
+          <div class="settings_container p-4">
+            <!-- Текущее значение -->
+            <div class="setting_item mb-4">
+              <strong>Текущее значение:</strong>
+              {{ getFormattedValue(sensor, value) }}
             </div>
 
-            <DrawerFooter class="flex flex-col gap-4 p-4">
-              <!-- Кнопка "Сохранить" -->
-              <Button @click="saveSettings" class="w-full">Сохранить</Button>
+            <!-- Минимальное допустимое значение -->
+            <div class="setting_item mb-4">
+              <Label for="min-value">Мин. допустимое значение</Label>
+              <Input
+                id="min-value"
+                type="number"
+                placeholder="Введите минимум"
+                v-model="localMinValue"
+              />
+            </div>
 
-              <!-- Кнопка "Закрыть" -->
-              <Button
-                variant="outline"
-                @click="isDrawerOpen = false"
-                class="w-full"
-              >
-                Закрыть
-              </Button>
-            </DrawerFooter>
+            <!-- Максимальное допустимое значение -->
+            <div class="setting_item mb-4">
+              <Label for="max-value">Макс. допустимое значение</Label>
+              <Input
+                id="max-value"
+                type="number"
+                placeholder="Введите максимум"
+                v-model="localMaxValue"
+              />
+            </div>
           </div>
-        </DrawerContent>
-      </Drawer>
-    </div>
+
+          <DrawerFooter class="flex flex-col gap-4 p-4">
+            <!-- Кнопка "Сохранить" -->
+            <Button @click="saveSettings" class="w-full">Сохранить</Button>
+
+            <!-- Кнопка "Закрыть" -->
+            <Button
+              variant="outline"
+              @click="isDrawerOpen = false"
+              class="w-full"
+            >
+              Закрыть
+            </Button>
+          </DrawerFooter>
+        </div>
+      </DrawerContent>
+    </Drawer>
   </Card>
 </template>
 
 <style scoped>
+.card_container {
+  width: 100%;
+  min-width: 17.5rem;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -223,6 +232,13 @@ watch(isDrawerOpen, (newVal) => {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+.sensor_info__container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  align-self: stretch;
 }
 .drawer_layout {
   display: flex;
@@ -238,6 +254,19 @@ watch(isDrawerOpen, (newVal) => {
   align-items: center;
   gap: 16px;
 }
+.button_container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
+  align-self: stretch;
+}
+.more__button {
+  width: 100%;
+}
+.settings__button {
+  min-width: 57px;
+}
 .primary {
   color: #0f172a;
   font-size: 16px;
@@ -246,15 +275,30 @@ watch(isDrawerOpen, (newVal) => {
   line-height: 24px;
   letter-spacing: 0.1px;
 }
-.secondary {
-  overflow: hidden;
-  color: #0f172a;
-  text-overflow: ellipsis;
-  font-size: 20px;
+.medium {
+  color: #18181b;
+  font-size: 0.875rem;
   font-style: normal;
   font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0.15px;
+  line-height: 1.25rem;
+}
+.muted {
+  color: #64748b;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 0.875rem;
+}
+.value_text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.5rem; /* 120% */
+  letter-spacing: 0.00938rem;
 }
 .settings_container {
   max-width: 100%;

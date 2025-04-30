@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import apiClient from '@/services/authService';
+import { timestamp } from '@vueuse/core';
 
 export const usePoolsStore = defineStore('pools', {
   state: () => ({
@@ -16,17 +17,19 @@ export const usePoolsStore = defineStore('pools', {
       try {
         const response = await apiClient.get('all-pools/', {});
 
-        if (response.data.data_type) {
-          const poolsDataString = response.data.data_type.replace(/'/g, '"');
-          const poolsData = JSON.parse(poolsDataString);
-
-          this.pools = poolsData.map((pool) => ({
+        if (response.data && Array.isArray(response.data.data_type)) {
+          this.pools = response.data.data_type.map((pool) => ({
             pool_id: pool.pool_id,
             pool_name: pool.pool_name,
             pool_desc: pool.pool_desc,
+            health_percents: pool.health_percents,
+            health_zone: pool.health_zone,
+            last_update: pool.timestamp,
           }));
         } else {
-          console.error('Поле data_type отсутствует в ответе сервера');
+          console.error(
+            'Поле data_type отсутствует или содержит некорректные данные'
+          );
         }
       } catch (error) {
         console.error('Ошибка при получении данных о бассейнах:', error);

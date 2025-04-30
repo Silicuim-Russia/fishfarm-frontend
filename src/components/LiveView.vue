@@ -13,9 +13,9 @@ const toggleStream = () => {
   <div class="live__container">
     <div class="screen">
       <div v-if="isStreaming" class="stream__container">
-        <LivePlayer class="stream" />
+        <LivePlayer />
         <Button variant="outline" class="stop-button" @click="toggleStream">
-          Отключить трансляцию
+          <img src="/src/assets/icons/stop.svg" alt="" />
         </Button>
       </div>
       <div v-else class="stream__container">
@@ -37,12 +37,11 @@ const toggleStream = () => {
 <style scoped>
 .live__container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 840px;
-  margin: 0 auto;
-  margin-bottom: 24px;
+  height: 18.75rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.625rem;
+  align-self: stretch;
 }
 .screen {
   position: relative;
@@ -61,13 +60,11 @@ const toggleStream = () => {
   justify-content: center;
   background-color: black;
 }
-.stream {
-  max-width: 100%;
-  object-fit: contain;
-}
 .background-image {
-  max-width: 100%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .overlay {
   position: absolute;
@@ -89,5 +86,10 @@ const toggleStream = () => {
   top: 10px;
   right: 10px;
   z-index: 1;
+  display: flex;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
 }
 </style>

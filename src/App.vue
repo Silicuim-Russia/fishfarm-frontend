@@ -20,4 +20,8 @@ onMounted(async () => {
   <router-view></router-view>
 </template>
 
-<style scoped></style>
+<style scoped>
+template {
+  height: 100%;
+}
+</style>

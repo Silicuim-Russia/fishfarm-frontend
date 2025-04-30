@@ -1,61 +1,49 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import Hls from 'hls.js';
 
 const videoPlayer = ref(null);
-
-const hlsUrl = 'https://stream.noobweer.ru/hls/output.m3u8';
+const hlsUrl = 'http://127.0.0.1:8000/watch/1';
+let hls = null;
 
 onMounted(() => {
-  if (Hls.isSupported()) {
-    const hls = new Hls();
-    hls.loadSource(hlsUrl);
-    hls.attachMedia(videoPlayer.value);
+  const video = videoPlayer.value;
 
-    videoPlayer.value.addEventListener('loadedmetadata', () => {
-      videoPlayer.value.currentTime = videoPlayer.value.duration || 0;
-      videoPlayer.value.play();
-    });
-  } else if (videoPlayer.value.canPlayType('application/vnd.apple.mpegurl')) {
-    videoPlayer.value.src = hlsUrl;
+  if (!video) return;
 
-    videoPlayer.value.addEventListener('loadedmetadata', () => {
-      videoPlayer.value.currentTime = videoPlayer.value.duration || 0;
-      videoPlayer.value.play();
-    });
-  }
+  hls = new Hls({
+    autoStartLoad: true,
+    enableWorker: true,
+    xhrSetup: function (xhr) {
+      xhr.withCredentials = false;
+    },
+  });
+
+  hls.loadSource(hlsUrl);
+  hls.attachMedia(video);
+
+  video.play().catch((err) => {
+    console.warn('❌ Autoplay failed:', err);
+  });
 });
 
 onBeforeUnmount(() => {
-  if (videoPlayer.value) {
-    videoPlayer.value.pause();
-    videoPlayer.value.src = '';
+  if (hls) {
+    hls.destroy();
+    hls = null;
   }
 });
 </script>
 
 <template>
-  <div class="video-container">
-    <video
-      ref="videoPlayer"
-      controls
-      autoplay
-      playsinline
-      muted
-      class="video-player"
-    ></video>
-  </div>
+  <video ref="videoPlayer" class="video" autoplay playsinline muted></video>
 </template>
 
 <style scoped>
-.video-container {
+.video {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.video-player {
-  width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 </style>
