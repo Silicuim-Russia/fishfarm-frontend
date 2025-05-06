@@ -98,9 +98,6 @@ const login = async () => {
 </template>
 
 <style scoped>
-.login__container {
-  padding: 20px;
-}
 .login_form__container {
   max-width: 480px;
 }

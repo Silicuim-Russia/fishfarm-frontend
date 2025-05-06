@@ -12,13 +12,17 @@ const logout = () => {
   localStorage.removeItem('refresh_token');
   router.push({ name: 'LoginPage' });
 };
+
+const create = () => {
+  router.push({ name: 'CreatePage' });
+};
 </script>
 
 <template>
   <div class="header__container">
     <Button variant="default" @click="logout">Выйти</Button>
     <Button variant="default" @click="">Настройки аккаунта</Button>
-    <Button variant="default" @click="">Новый бассейн</Button>
+    <Button variant="default" @click="create">Новый бассейн</Button>
     <Button variant="default" @click="">Обновить данные</Button>
   </div>
 
