@@ -34,7 +34,7 @@ const poolsStore = usePoolsStore();
   display: flex;
   align-items: center;
   align-content: center;
-  gap: 1.25rem;
+  gap: 1rem;
   align-self: stretch;
   flex-wrap: wrap;
 }

@@ -6,7 +6,6 @@ import StateBadge from './StateBadge.vue';
 defineProps({
   pool_id: [String, Number],
   pool_name: String,
-  pool_desc: String,
   health_percents: Number,
   health_zone: String,
   last_update: String,
@@ -21,16 +20,12 @@ function formatTime(isoString) {
 <template>
   <router-link :to="{ name: 'HomePage', params: { id: pool_id } }">
     <Card class="pool_card">
-      <div class="info_layout">
-        <span class="title">{{ pool_name }}</span>
-        <span class="muted">{{ pool_desc }}</span>
-      </div>
+      <span class="title">{{ pool_name }}</span>
 
       <div class="stats__container">
         <span class="muted">Состояние</span>
         <div class="state__container">
           <span class="medium">{{ health_percents }}%</span>
-          <img src="/src/assets/icons/dot.svg" alt="" />
           <StateBadge :health_zone="health_zone" />
         </div>
       </div>
@@ -43,7 +38,7 @@ function formatTime(isoString) {
 
         <div class="stats__container">
           <span class="muted">ID</span>
-          <span class="medium">1</span>
+          <span class="medium">{{ pool_id }}</span>
         </div>
       </div>
 
@@ -64,12 +59,6 @@ function formatTime(isoString) {
   justify-content: center;
   align-items: flex-start;
   gap: 1rem;
-}
-.info_layout {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
 }
 .stats__container {
   display: flex;

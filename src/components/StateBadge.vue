@@ -22,7 +22,7 @@ const getFormattedZone = (health_zone) => {
 <style scoped>
 .badge {
   display: flex;
-  padding: 0.25rem 0.5rem;
+  padding: 0.1875rem 0.375rem;
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
