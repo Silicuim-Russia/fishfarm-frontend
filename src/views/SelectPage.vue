@@ -1,31 +1,11 @@
 <script setup>
-import Button from '@/components/ui/button/Button.vue';
 import SelectCard from '@/components/SelectCard.vue';
 import { usePoolsStore } from '../../stores/poolsStore';
-import { useRouter } from 'vue-router';
 
 const poolsStore = usePoolsStore();
-const router = useRouter();
-
-const logout = () => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
-  router.push({ name: 'LoginPage' });
-};
-
-const create = () => {
-  router.push({ name: 'CreatePage' });
-};
 </script>
 
 <template>
-  <div class="header__container">
-    <Button variant="default" @click="logout">Выйти</Button>
-    <Button variant="default" @click="">Настройки аккаунта</Button>
-    <Button variant="default" @click="create">Новый бассейн</Button>
-    <Button variant="default" @click="">Обновить данные</Button>
-  </div>
-
   <div class="select__container">
     <span class="title">Все бассейны</span>
     <div class="pools_container">
@@ -43,23 +23,12 @@ const create = () => {
 </template>
 
 <style scoped>
-.header__container {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  align-content: center;
-  gap: 0.625rem;
-  flex-wrap: wrap;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
 .select__container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
   gap: 1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
 }
 .pools_container {
   display: flex;

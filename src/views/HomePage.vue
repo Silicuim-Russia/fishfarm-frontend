@@ -1,6 +1,5 @@
 <script setup>
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import HeaderMenu from '@/components/HeaderMenu.vue';
 import LiveView from '@/components/LiveView.vue';
 import PoolInfo from '@/components/PoolInfo.vue';
 import SensorCard from '@/components/SensorCard.vue';
@@ -34,9 +33,8 @@ const sensorsList = computed(() => poolsDataStore.getSensorsList);
 </script>
 
 <template>
-  <HeaderMenu :pool_id_active="pool_id" />
-  <div class="home_page__container">
-    <div class="general_info__container">
+  <div class="sensor-data__container">
+    <div class="general-info__container">
       <LiveView />
       <PoolInfo
         :name="poolInfo.pool_name"
@@ -45,97 +43,77 @@ const sensorsList = computed(() => poolsDataStore.getSensorsList);
       />
     </div>
 
-    <div class="tab_list__container">
-      <!-- Вкладки -->
-      <Tabs defaultValue="sensors" class="tabs__container">
-        <div>
-          <TabsList>
-            <TabsTrigger value="sensors">Датчики</TabsTrigger>
-            <TabsTrigger value="settings">Общие настройки</TabsTrigger>
-          </TabsList>
-        </div>
+    <!-- Вкладки -->
+    <Tabs defaultValue="sensors" class="tabs-content__container">
+      <TabsList>
+        <TabsTrigger value="sensors">Датчики</TabsTrigger>
+        <TabsTrigger value="settings">Общие настройки</TabsTrigger>
+      </TabsList>
 
-        <!-- Содержимое вкладки "Датчики" -->
-        <TabsContent value="sensors">
-          <div class="sensors__container">
-            <SensorCard
-              v-for="sensor in sensorsList"
-              :pool_id="pool_id"
-              :sensor="sensor.sensor_name"
-              :value="sensor.value"
-              :maxValue="sensor.maxValue"
-              :minValue="sensor.minValue"
-              :zone="sensor.zone"
-            />
-          </div>
-        </TabsContent>
+      <!-- Содержимое вкладки "Датчики" -->
+      <TabsContent value="sensors" class="tabs-content--sensors">
+        <SensorCard
+          v-for="sensor in sensorsList"
+          :pool_id="pool_id"
+          :sensor="sensor.sensor_name"
+          :value="sensor.value"
+          :maxValue="sensor.maxValue"
+          :minValue="sensor.minValue"
+          :zone="sensor.zone"
+          class="sensor-card"
+        />
+      </TabsContent>
 
-        <!-- Содержимое вкладки "settings" -->
-        <TabsContent value="settings">
-          <SettingsTab :pool_id="pool_id" />
-        </TabsContent>
-      </Tabs>
-    </div>
+      <!-- Содержимое вкладки "settings" -->
+      <TabsContent value="settings" class="tabs-content--settings">
+        <SettingsTab :pool_id="pool_id" />
+      </TabsContent>
+    </Tabs>
   </div>
 </template>
 
 <style scoped>
-.home_page__container {
-  display: inline-flex;
+.sensor-data__container {
+  display: flex;
+  width: 100%;
   align-items: flex-start;
   align-content: flex-start;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  width: 100%;
   gap: 1rem;
   flex-wrap: wrap;
 }
-.general_info__container {
+
+.general-info__container {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-shrink: 0;
+
+  width: auto;
   max-width: 25rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
+  min-width: 20rem;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    min-width: unset;
+  }
 }
-.tab_list__container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
+
+.tabs-content__container {
+  display: block;
+  height: auto;
   flex: 1 0 0;
 }
-.tabs__container {
-  width: 100%;
-}
-.sensors__container {
+
+.tabs-content--sensors {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
+  gap: 0.5rem;
 }
-@media (max-width: 768px) {
-  .sensors__container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 480px) {
-  .sensors__container {
-    grid-template-columns: 1fr;
-  }
-}
-.title {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 28px;
-}
-.pool_settings {
-  width: 100%;
-  max-width: 404px;
-  margin: 0 auto;
-}
-.settings__container {
-  width: 100%;
-  max-width: 840px;
-  margin: 0 auto;
-  margin-top: 16px;
+.tabs-content--settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0rem;
 }
 </style>

@@ -46,13 +46,11 @@ const toggleStream = () => {
 .screen {
   position: relative;
   width: 100%;
-  max-width: 840px;
   height: 300px;
   border-radius: 6px;
   overflow: hidden;
 }
 .stream__container {
-  max-width: 840px;
   width: 100%;
   height: 300px;
   display: flex;

@@ -153,12 +153,6 @@ const handleDeleteClick = () => {
 </template>
 
 <style scoped>
-.settings__container {
-  width: 100%;
-  max-width: 840px;
-  margin: 0 auto;
-  margin-top: 16px;
-}
 .content__container {
   padding: 0;
 }

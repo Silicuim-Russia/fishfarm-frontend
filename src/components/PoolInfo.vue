@@ -10,9 +10,9 @@ defineProps({
 
 <template>
   <Card class="pool_info__container">
-    <div class="text_title__layout">
+    <div class="subinfo_text__container">
       <span class="muted">Название</span>
-      <span class="large">{{ name }}</span>
+      <span class="medium">{{ name }}</span>
     </div>
     <div class="text_subinfo__layout">
       <div class="subinfo_text__container">
@@ -42,11 +42,6 @@ defineProps({
   align-items: flex-end;
   align-self: stretch;
 }
-.text_title__layout {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
 .text_subinfo__layout {
   display: flex;
   align-items: flex-start;
@@ -64,13 +59,6 @@ defineProps({
   font-style: normal;
   font-weight: 400;
   line-height: 0.875rem;
-}
-.large {
-  color: #18181b;
-  font-size: 1.125rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.75rem;
 }
 .medium {
   color: #18181b;

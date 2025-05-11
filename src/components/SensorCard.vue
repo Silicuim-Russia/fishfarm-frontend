@@ -6,7 +6,6 @@ import {
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-  DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -221,6 +220,7 @@ watch(isDrawerOpen, (newVal) => {
 .card_container {
   width: 100%;
   min-width: 17.5rem;
+  box-sizing: border-box;
 }
 .sr-only {
   position: absolute;
@@ -265,7 +265,7 @@ watch(isDrawerOpen, (newVal) => {
   width: 100%;
 }
 .settings__button {
-  min-width: 57px;
+  min-width: 3.563rem;
 }
 .primary {
   color: #0f172a;
@@ -309,11 +309,5 @@ watch(isDrawerOpen, (newVal) => {
 .setting_item {
   font-size: 14px;
   color: #333;
-}
-.text-green {
-  color: #2cc702;
-}
-.text-red {
-  color: #ff0000;
 }
 </style>
