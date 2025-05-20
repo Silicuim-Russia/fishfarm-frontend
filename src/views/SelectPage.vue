@@ -11,6 +11,7 @@ const poolsStore = usePoolsStore();
     <div class="pools_container">
       <SelectCard
         v-for="pool in poolsStore.allPools"
+        :key="pool.pool_id"
         :pool_id="pool.pool_id"
         :pool_name="pool.pool_name"
         :pool_desc="pool.pool_desc"
@@ -28,13 +29,13 @@ const poolsStore = usePoolsStore();
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 .pools_container {
   display: flex;
-  align-items: center;
-  align-content: center;
-  gap: 1rem;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 0.5rem;
   align-self: stretch;
   flex-wrap: wrap;
 }

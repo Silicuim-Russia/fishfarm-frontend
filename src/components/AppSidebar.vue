@@ -1,5 +1,11 @@
 <script setup>
-import { Bell, PencilLine, Home, LogOut, Settings } from 'lucide-vue-next';
+import {
+  ClipboardList,
+  PencilLine,
+  Home,
+  LogOut,
+  Settings,
+} from 'lucide-vue-next';
 import {
   Sidebar,
   SidebarContent,
@@ -45,8 +51,8 @@ const logOut = () => {
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <router-link :to="{ name: '' }">
-                  <component :is="Bell" />
-                  <span>Уведомления</span>
+                  <component :is="ClipboardList" />
+                  <span>Последние изменения</span>
                 </router-link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -53,7 +53,7 @@ function formatTime(isoString) {
 <style scoped>
 .pool_card {
   display: flex;
-  width: 11.75rem;
+  width: 100%;
   padding: 1rem;
   flex-direction: column;
   justify-content: center;

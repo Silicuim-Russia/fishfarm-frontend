@@ -47,6 +47,8 @@ const sensorsList = computed(() => poolsDataStore.getSensorsList);
     <Tabs defaultValue="sensors" class="tabs-content__container">
       <TabsList>
         <TabsTrigger value="sensors">Датчики</TabsTrigger>
+        <TabsTrigger value="devices">Устройства</TabsTrigger>
+        <TabsTrigger value="scenarios">Сценарии</TabsTrigger>
         <TabsTrigger value="settings">Общие настройки</TabsTrigger>
       </TabsList>
 
@@ -54,6 +56,7 @@ const sensorsList = computed(() => poolsDataStore.getSensorsList);
       <TabsContent value="sensors" class="tabs-content--sensors">
         <SensorCard
           v-for="sensor in sensorsList"
+          :key="sensor.sensor_id"
           :pool_id="pool_id"
           :sensor="sensor.sensor_name"
           :value="sensor.value"

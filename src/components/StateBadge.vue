@@ -9,7 +9,7 @@ const getFormattedZone = (health_zone) => {
     warning: `Внимание`,
     danger: `Опасно`,
   };
-  return formats[health_zone] || value.toFixed(2);
+  return formats[health_zone] || 'Unknown';
 };
 </script>
 

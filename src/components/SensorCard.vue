@@ -1,4 +1,5 @@
 <script setup>
+import { Loader2 } from 'lucide-vue-next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -73,9 +74,11 @@ const getFormattedValue = (sensor, value) => {
 
 const localMinValue = ref(null);
 const localMaxValue = ref(null);
+const isLoading = ref(false);
 
 const saveSettings = async () => {
   try {
+    isLoading.value = true;
     const response = await apiClient.post('update/', {
       sensor: props.sensor,
       pool_id: props.pool_id,
@@ -100,10 +103,9 @@ const saveSettings = async () => {
       description: 'Проверьте введенные данные для изменения.',
       variant: 'destructive',
     });
-    errorMessage.value = error.message || 'Произошла ошибка при сохранении.';
-    console.log('error');
   } finally {
     isDrawerOpen.value = false;
+    isLoading.value = false;
   }
 };
 
@@ -199,7 +201,13 @@ watch(isDrawerOpen, (newVal) => {
 
           <DrawerFooter class="flex flex-col gap-4 p-4">
             <!-- Кнопка "Сохранить" -->
-            <Button @click="saveSettings" class="w-full">Сохранить</Button>
+            <Button v-if="!isLoading" @click="saveSettings" class="w-full">
+              Сохранить
+            </Button>
+            <Button v-else disabled class="w-full">
+              <Loader2 class="w-4 h-4 animate-spin" />
+              Подождите...
+            </Button>
 
             <!-- Кнопка "Закрыть" -->
             <Button
